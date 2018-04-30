@@ -4,6 +4,7 @@ import os
 import numpy as np
 import re
 import shutil
+import collections
 
 class aStructure:
     def __init__(self,dirname,libname,species):
@@ -35,7 +36,7 @@ class aStructure:
         self.postype = buf[7]
         pattern = re.compile(r'^(C|c).*')
         self.postype ='cart' if pattern.match(self.postype) else 'frac'
-        self.atomnums = dict(zip(buf[5].split(),map(int,buf[6].split())))
+        self.atomnums = collections.OrderedDict(zip(buf[5].split(),map(int,buf[6].split())))
         for element in self.atomnums:
             self.cnt = self.cnt + self.atomnums[element]
         self.atompos = [map(float,line.split()[0:3]) for line in buf[8:8+self.cnt]]

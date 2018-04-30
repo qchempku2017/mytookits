@@ -4,6 +4,7 @@ import os
 import numpy as np
 import re
 import shutil
+import collections
 
 class aStructure:
     def __init__(self,dirname,libname,ref,species):
@@ -11,7 +12,7 @@ class aStructure:
         "species - species read from gulp lib file."
         self.scale = []
         self.cell = []
-        self.atomnums = {}
+        self.atomnums = collections.OrderedDict({})
         self.atompos = []
         self.atomnames = []
         self.dftref = {}
