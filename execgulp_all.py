@@ -24,6 +24,7 @@ class aStructure:
         self.species = species
         self.lib = libname
         self.dirname = dirname
+        self.error = False
         for element in ref:
             self.dftref[element[0]]=element[1]
             self.ffref[element[0]]=element[2]
@@ -123,7 +124,14 @@ class aStructure:
         pattern2 = re.compile(r'.*Final Gnorm.*')
         for line in buf:
             if pattern1.match(line):
-                gulpene = float(line.split()[3])
+                try:
+                    gulpene = float(line.split()[3])
+                except:
+                    f_fail = open('error','w')
+                    f_fail.close()
+                    print "GULP OPT for"+self.dirname+" failed!"
+                    self.error = True
+                    return 0
             if pattern2.match(line):
                 gnorm = float(line.split()[3])
         if gnorm > 0.01:
@@ -172,10 +180,11 @@ class aStructure:
         if mode == 'readvasp':
             self.ReadVasp()
         else:
-            slef.ExecVasp()
-        self.WriteToGulp()
-        self.ExecGulp()
-        self.DFTminusFF_form()
+            self.ExecVasp()
+        if not self.error:
+            self.WriteToGulp()
+            self.ExecGulp()
+            self.DFTminusFF_form()
 
 def ReadRef(filename='refstates'):
     "The first row is reference pure compund name by one of its element, the 2nd row of file 'refstates' is PBE energy, the 3rd is gulp energy.Do not leave a blank line!"
